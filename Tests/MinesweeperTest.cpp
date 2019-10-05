@@ -1,5 +1,3 @@
-//g++ Minesweeper3.cpp -lSDL2 -lpthread -o Minesweeper3
-
 #include <stdlib.h>
 
 #include "../DrawingLibrary.h"
@@ -609,7 +607,7 @@ void welcomeScreen() {
 
 }
 
-void * createProgramStart() {
+void createProgramStart(void * argument) {
 	gameParent = parentWindow;
 	welcomeScreen();
 	displayWindow( parentWindow, onScreen );
@@ -617,13 +615,10 @@ void * createProgramStart() {
 	setHandlerState( MOUSE_BUTTON, MOUSE_LOCATION_HANDLER );
 	setHandlerState( RIGHT_BUTTON, MOUSE_LOCATION_HANDLER );
 	setHandlerState( MOUSE_RELEASE, MOUSE_LOCATION_HANDLER );
-	return NULL;
 }
 
 int main(int argc, char* args[])
 {
-	initializingFunction = createProgramStart;
-
-	createDrawingEnvironment();
+	createDrawingEnvironment( createProgramStart, NULL );
 	return 0;
 };
