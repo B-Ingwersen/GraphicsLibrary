@@ -78,9 +78,6 @@ void callWindowEventHandler( drawData * handlingWindow, int handlerID ) {
 		if (parentWindow != NULL) {
 			callWindowEventHandler( parentWindow, handlerID );
 		}
-		/*else if ( eventHandlers[ handlerID ].state != HANDLER_DISABLED ) {
-			callGlobalEventHandler( handlerID );
-		}*/
 	}
 }
 
@@ -90,7 +87,6 @@ void callEventHandler( int handlerID ) {
 	}
 	else if (eventHandlers[ handlerID ].state == MOUSE_LOCATION_HANDLER) {
 		drawData * mouseWindow = findHandlerWindowWithCoords( mouseX, mouseY, parentWindow, handlerID);
-		//cout << mouseWindow << endl;
 		callWindowEventHandler( mouseWindow, handlerID );
 	}
 }

@@ -57,7 +57,6 @@ bool getFrameBuffer() {
     }
     printf("The framebuffer device was mapped to memory successfully.\n");
 
-    //return (Uint32 *)(FRAME_BUFFER_MASTER);
     return true;
 }
 

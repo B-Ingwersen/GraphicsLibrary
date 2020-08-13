@@ -54,7 +54,6 @@ void reconfigureParentWindow(int width, int height) {
 	parentWindow -> arguments[7] = arg7;
 	parentWindow -> arguments[8] = arg8;
 
-	//reconfigureParentWindow( WINDOW_WIDTH_PARENT, WINDOW_HEIGHT_PARENT );
 	if ( sizeChangeFunction != NULL ) { (*sizeChangeFunction)(); }
 
 	pthread_spin_unlock(&sizeChangeSpinLock);

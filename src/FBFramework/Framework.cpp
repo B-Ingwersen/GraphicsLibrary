@@ -10,6 +10,7 @@
 void FBFramework_prepProcessEvents() {
     // Nothing required
 }
+
 void FBFramework_displayProcessedEvents() {
     memcpy( FRAME_BUFFER_MASTER, onScreen -> screen, FB_SCREENSIZE );
     drawCursor();

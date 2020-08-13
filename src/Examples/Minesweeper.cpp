@@ -1,16 +1,9 @@
-#include <stdlib.h>
-
-/*#include "../DrawingLibrary.h"
-#include "../Extensions/Text.h"
-#include "../Extensions/BasicGUIElements.h"
-#include "../Extensions/WindowShadows.h"
-#include "../Extensions/ThemeExp.h"*/
-
 #include "GraphicsLibrary/Core.h"
 #include "GraphicsLibrary/Extensions/Text.h"
 #include "GraphicsLibrary/Extensions/BasicGUIElements.h"
 #include "GraphicsLibrary/Extensions/WindowShadows.h"
 #include "GraphicsLibrary/Extensions/ThemeExp.h"
+#include <stdlib.h>
 #include <ctime>
 
 struct boardInfo {
@@ -212,7 +205,6 @@ void drawFlag( drawData * tile ) {
 void displayTile( int tileIndex ) {
 	if ( gameNotYetStarted ) {
 		gameNotYetStarted = false;
-		//generateBoard();
 	}
 
 	drawData * tile = board[ tileIndex ].tile;
@@ -280,8 +272,6 @@ void blurBarResize12( drawData * blur ) {
 	int textSize = ( getWindowWidth( gameParent ) * 4 / 5) / 54;
 	int textHeightPixels = textSize * 13;
 
-	//deleteWindowContents( blur );
-	//drawCenteredText( gameParent, gameOverMessage, getWindowWidth( gameParent ) / 2, getWindowHeight( gameParent ) / 2, 0xFF0000, textSize );
 	blur -> arguments[1] = (getWindowWidth( gameParent ) - textSize * 9 * 6) / 2;
 	blur -> arguments[2] = (getWindowHeight( gameParent ) - textSize * 9) / 2;
 	blur -> arguments[3] = textSize * 9 * 6;
@@ -421,7 +411,7 @@ void resizeBoard( drawData * gameWindow ) {
 	int boardHeightPixels = tileSize * boardHeight;
 	int boardWidthPixels = tileSize * boardWidth;
 
-	tileTextSize = (tileSize - 2 * padding) * 4 / 45;	// times 0.8 for fit as well as / 9 for height in pixels
+	tileTextSize = (tileSize - 2 * padding) * 4 / 45;
 	gameWindow -> arguments[1] = (parentWindow -> window -> X2 - boardWidthPixels) / 2;
 	gameWindow -> arguments[2] = 75;
 	gameWindow -> arguments[3] = boardWidthPixels;
@@ -477,7 +467,7 @@ void gameScreen( drawData * callingWindow ) {
 	int boardHeightPixels = tileSize * boardHeight;
 	int boardWidthPixels = tileSize * boardWidth;
 
-	tileTextSize = (tileSize - 2 * padding) * 4 / 45;	// times 0.8 for fit as well as / 9 for height in pixels
+	tileTextSize = (tileSize - 2 * padding) * 4 / 45;
 	drawData * gameWindow = createWindow( gameParent, (parentWindow -> window -> X2 - boardWidthPixels) / 2, 75, boardWidthPixels, boardHeightPixels );
 	bottomPanel = createWindow( gameParent, 0, parentWindow -> window -> Y2 - 75, parentWindow -> window -> X2, 75 );
 	setResizeFunc( gameWindow, resizeBoard );
@@ -604,8 +594,6 @@ void selectionScreen( drawData * callingWindow ) {
 void welcomeScreen() {
 	deleteWindowContents( parentWindow );
 	drawData * parentBackground = addBackground( 0xFF, parentWindow );
-
-	//createCounter( parentWindow, 500, 500, 4, 20, 8, 4 );
 
 	drawData * entMessage = drawCenteredText( parentWindow, welcomeMessage, (parentWindow -> window -> X2) / 2, 100, 0, 4 );
 	setResizeFunc( entMessage, resizeCx );

@@ -28,8 +28,6 @@ void drawEventRepositionWindow( drawData drawInformation ) {
 	window -> arguments[3] = drawInformation.arguments[2];
 	window -> arguments[4] = drawInformation.arguments[3];
 
-	//cout << "reconfig\t" << window -> arguments[3] << "\t" << window -> arguments[4] << endl;
-
 	reconfigureWindowDimensions( window );
 }
 

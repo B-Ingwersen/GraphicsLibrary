@@ -367,7 +367,6 @@ drawData * createOneLineTextBox( drawData * window, int x, int y, int width, int
 	char * text = new char[128];
 	int i; for ( i = 0; i < 128; i++ ) { text[i] = 0; };
 
-	//drawData * textObj = addText( text, 10, (height - textSize * 9) / 2 + textSize * 9, width - 10, 22, 0, 1, textBox );
 	drawData * textObj = addText( text, 10, (height - textSize * 9) / 2, width - 10, textSize, 0, 1, textBox );
 	textObj -> handlerFunctionsPointer = NULL;
 	addWindowEventHandler( textObj, KEY_PRESS, extraFunction );

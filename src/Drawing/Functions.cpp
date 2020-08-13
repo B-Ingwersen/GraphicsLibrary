@@ -558,118 +558,6 @@ void drawCircle(drawData drawInformation) {
 	}
 }
 
-/*void drawTriangle(drawData drawInformation) {
-	uint32_t * pixels = drawInformation.screen -> screen;
-	int WINDOW_WIDTH = drawInformation.screen -> windowWidth;
-	int WINDOW_HEIGHT = drawInformation.screen -> windowHeight;
-	windowSection WINDOW = *(drawInformation.window);
-
-	int x1 = drawInformation.arguments[0] + WINDOW.X1;
-	int y1 = drawInformation.arguments[1] + WINDOW.Y1;
-	int x2 = drawInformation.arguments[2] + WINDOW.X1;
-	int y2 = drawInformation.arguments[3] + WINDOW.Y1;
-	int x3 = drawInformation.arguments[4] + WINDOW.X1;
-	int y3 = drawInformation.arguments[5] + WINDOW.Y1;
-	int color = drawInformation.arguments[6];
-
-	int X1, Y1, X2, Y2, X3, Y3;
-	//X1 = 0;
-	//Assign the uppercase variables according to the y-values: Y1 < Y2 < Y3
-	if (y2 > y1) {
-		if (y2 > y3) {
-			X2 = x2;
-			Y2 = y2;
-			if (y3 > y1) {X3 = x3; Y3 = y3; X1 = x1; Y1 = y1;}
-			else {X3 = x1;Y3 = y1;X1 = x3;Y1 = y3;}
-		}
-		else {
-			X2 = x3;
-			Y2 = y3;
-			if (y2 > y1) {X3 = x2;Y3 = y2;	X1 = x1;Y1 = y1;}
-			else {X3 = x1;Y3 = y1;X1 = x2;Y1 = y2;}
-		}
-	}
-	else {
-		if (y1 > y3) {
-			X2 = x1;
-			Y2 = y1;
-			if (y3 > y2) {X3 = x3;Y3 = y3;X1 = x2;Y1 = y2;}
-			else {X3 = x2;Y3 = y2;X1 = x3;Y1 = y3;}
-		}
-		else {
-			X2 = x3;
-			Y2 = y3;
-			if (y2 > y1) {X3 = x2;	Y3 = y2;X1 = x1;Y1 = y1;}
-			else {X3 = x1;Y3 = y1;X1 = x2;Y1 = y2;}
-		}
-	}
-
-
-	int xdiff1 = X2 - X1; int ydiff1 = Y2 - Y1; //Line 1: (X1,Y1) -> (X2,Y2)
-	int xdiff2 = X3 - X1; int ydiff2 = Y3 - Y1; //Line 2: (X1,Y1) -> (X3,Y3)
-	int xdiff3 = X2 - X3; int ydiff3 = Y2 - Y3; //Line 3: (X2,Y2) -> (X3,Y3)
-	int xDiffStore = xdiff1; // incase values are changed, store them before executing
-	int yDiffStore = ydiff1;
-
-	int yLimit = ydiff2;
-	int j = 0;
-	int i1, i2, drawMemStart, drawMemEnd; //drawing pointers for drawing horizontal segments
-
-	if (ydiff2 != 0) {
-		if ((float)(xdiff1) / (float)(ydiff1) > (float)(xdiff2) / (float)(ydiff2)) {  // swap x and y if one slope is greater than the other
-			xdiff1 = xdiff2; xdiff2 = xDiffStore;
-			ydiff1 = ydiff2; ydiff2 = yDiffStore;
-		}
-
-		if (yLimit + Y1 >= WINDOW_HEIGHT) { yLimit = WINDOW_HEIGHT - Y1 - 1; } //Prevent screen overflow
-		if (Y1 < WINDOW.Y1) { j = -Y1 + WINDOW.Y1; }
-
-		while (j <= yLimit) {
-			i1 = j * xdiff1 / ydiff1 + X1;	// calculate start and endpoints of line segment
-			i2 = j * xdiff2 / ydiff2 + X1;
-			if (i1 < WINDOW.X1) {i1 = WINDOW.Y1;}
-			if (i2 >= WINDOW.X2) {i2 = WINDOW.X2 - 1;}
-			drawMemStart = WINDOW_WIDTH * (j + Y1) + i1;
-			drawMemEnd = WINDOW_WIDTH * (j + Y1) + i2;
-			while (drawMemStart < drawMemEnd) {
-				pixels[drawMemStart] = color;
-				drawMemStart++;
-			}
-			j++;
-		}
-	}
-	if (ydiff3 != 0) {
-
-	xdiff1 = xDiffStore;	// restore these values
-	ydiff1 = yDiffStore;
-
-	yLimit = ydiff3;
-	if ((float)(xdiff1) / (float)(ydiff1) < (float)(xdiff3) / (float)(ydiff3)) {  // swap x and y if one slope is creater than the other
-		xdiff1 = xdiff3; xdiff3 = xDiffStore;
-		ydiff1 = ydiff3; ydiff3 = yDiffStore;
-	}
-
-	j = 0;
-	if (Y2 >= WINDOW.Y2) {j = Y2 - WINDOW.Y2 + 1;} 	// ensures that it doesn't draw below bottom of screen
-	if (Y2 - yLimit < WINDOW.Y1) {yLimit = Y2 + WINDOW.Y1;}		// THIS MIGHT CAUSE PROBLEMS
-
-	while (j < yLimit) {
-		i1 = X2 - j * xdiff1 / ydiff1;	// calculate start and endpoints of line segment
-		i2 = X2 - j * xdiff3 / ydiff3;
-		if (i1 < WINDOW.X1) {i1 = WINDOW.Y1;}
-		if (i2 >= WINDOW.X2) {i2 = WINDOW.X2 - 1;}
-		drawMemStart = WINDOW_WIDTH * (Y2 - j) + i1;
-		drawMemEnd = WINDOW_WIDTH * (Y2 - j) + i2;
-		while (drawMemStart < drawMemEnd) {
-			pixels[drawMemStart] = color;
-			drawMemStart++;
-		}
-		j++;
-	}
-
-	}
-}*/
-
 void drawTriangle(drawData drawInformation) {
 	uint32_t * pixels = drawInformation.screen -> screen;
 	int WINDOW_WIDTH = drawInformation.screen -> windowWidth;
@@ -685,7 +573,7 @@ void drawTriangle(drawData drawInformation) {
 	int color = drawInformation.arguments[6];
 
 	int X1, Y1, X2, Y2, X3, Y3;
-	//X1 = 0;
+	
 	//Assign the uppercase variables according to the y-values: Y1 < Y2 < Y3
 	if (y2 > y1) {
 		if (y2 > y3) {
@@ -782,8 +670,6 @@ void drawTriangle(drawData drawInformation) {
         }
 	}
 }
-
-//void copyBufferSection( screenData * sourceBuffer, screenData * targetBuffer, int xSource, int ySource, int xTarget, int yTarget, int width, int height ) {
 
 void copyBufferSection(drawData drawInformation) {
 	int xSource = drawInformation.arguments[0];

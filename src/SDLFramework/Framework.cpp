@@ -75,11 +75,9 @@ void SDLFramework_EventLoop() {
                     if ( lastMouseWindow != currentMouseWindow ) {
                         if ( lastMouseWindow != NULL ) {
                             callWindowEventHandler( lastMouseWindow, WINDOW_EXIT );
-                            //cout << "WINDOW_EXIT\t" << lastMouseWindow << endl;
                         }
                         if ( currentMouseWindow != NULL) {
                             callWindowEventHandler( currentMouseWindow, WINDOW_ENTER );
-                            //cout << "WINDOW_ENTER\t" << currentMouseWindow << endl;
                         }
                     }
                 }
@@ -217,14 +215,7 @@ void SDLFramework_EventLoop() {
             {
                 switch (event.window.event) {
                     case SDL_WINDOWEVENT_RESIZED: {
-                        /*WINDOW_WIDTH_PARENT = event.window.data1;
-                        WINDOW_HEIGHT_PARENT = event.window.data2;
-                
-                        bool wasSizeChangeWaiting = sizeChangeWaiting;
-                        sizeChangeWaiting = true;*/
                         CTRL_DOWN = false; ALT_DOWN = false;
-                        //eventQueue1Index = 0;
-                        //eventQueue2Index = 0;
 
                         reconfigureParentWindow( event.window.data1, event.window.data2);
                         displayWindow(parentWindow, onScreen);

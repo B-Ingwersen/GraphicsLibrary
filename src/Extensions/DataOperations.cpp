@@ -65,7 +65,7 @@ void printBlock( int * data ) {
 }
 
 int flipWord( int value, int bitshift ) {
-	displayBinary( value, 16 ); //cout << "\t"; displayBinary( value << bitshift, 16 );  cout << endl;
+	displayBinary( value, 16 );
 	value << bitshift;
 	int lower = bitReversals[ value & 0xFF ];
 	int upper = bitReversals[ value >> 8 ];
@@ -97,7 +97,6 @@ int fillHuffmanTable( huffmanTable * table, unsigned char * pointer, unsigned ch
 
 	int * expandedTable1 = new int[ 512 ];
 
-	//cout << expandedTable1 << endl;
 	for ( i = 0; i < 512; i++ ) {
 		expandedTable1[i] = -1;
 	}
@@ -185,19 +184,12 @@ int fillHuffTableIntSource( huffmanTable * table, int * pointer, int * codePoint
 		value <<= 1;
 	}
 
-	//cout << endl;
-
 	int numOf16Tables = 0;
 	for ( i = 0; i < 256; i++ ) {
 		if ( expandedTable1[ 2 * i ] == -1 ) {
 			expandedTable1[ 2 * i + 1 ] = numOf16Tables;
 			numOf16Tables++;
 		}
-	}
-
-	// Displays the table -- for debugging
-	for ( i = 0; i < 256; i++ ) {		
-		//displayBinary( i, 8 ); cout << "\t" << expandedTable1[ 2 * i ] << "\t" << expandedTable1[ 2 * i + 1 ] << endl;
 	}
 
 	int * expandedTable2 = new int[numOf16Tables * 512];
@@ -209,7 +201,6 @@ int fillHuffTableIntSource( huffmanTable * table, int * pointer, int * codePoint
 		for ( j = 0; j < pointer[ i + 8 ]; j++ ) {
 			int newValue = bitReversals[ value & andValues[i + 1] ] >> (7 - i);
 			int table1Value = bitReversals[ value >> (i + 1) ];
-			//displayBinary( newValue, 8 ); cout << "\t"; displayBinary( table1Value, 8 ); cout << endl;
 			int * t2table = expandedTable2 + expandedTable1[ 2 * table1Value + 1] * 512;
 
 			int k;
@@ -222,10 +213,6 @@ int fillHuffTableIntSource( huffmanTable * table, int * pointer, int * codePoint
 			value++;
 		}
 		value <<= 1;
-	}
-
-	for ( i = 0; i < 256; i++ ) {		
-		//displayBinary( i, 8 ); cout << "\t" << expandedTable2[ 2 * i ] << "\t" << expandedTable2[ 2 * i + 1 ] << endl;
 	}
 
 	table -> table1 = expandedTable1;

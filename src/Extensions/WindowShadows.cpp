@@ -2,8 +2,7 @@
 #include "GraphicsLibrary/Extensions/WindowShadows.h"
 
 void drawWindowShadowFunc( drawData drawInfo ) {
-	//windowSection * window = drawInfo.window;
-	//windowSection * boundary = ( windowSection * )( drawInfo.dataPointer );
+
 	uint32_t * pixels = drawInfo.screen -> screen;
 	int WINDOW_WIDTH = drawInfo .screen -> windowWidth;
 
@@ -29,11 +28,9 @@ void drawWindowShadowFunc( drawData drawInfo ) {
 
 	int * alphaValues = new int[d];
 	int * alphaValuesCorner = new int[ d * d ];
-	//int * alphaValues2 = new int[d];
 
 	int i;
 	for ( i = 0; i < d; i++ ) {
-		//alphaValues[i] = 256 - alphaStart * i / d;
 		alphaValues[i] = 256 - alphaStart * ( d - i ) * ( d - i ) / ( d * d );
 		int j;
 		for ( j = 0; j < d; j++ ) {
@@ -257,12 +254,8 @@ void drawWindowShadowFunc( drawData drawInfo ) {
 }
 
 void drawInternalWindowShadow( drawData drawInfo ) {
-	//windowSection * window = drawInfo.window;
-	//windowSection * boundary = ( windowSection * )( drawInfo.dataPointer );
 	Uint32 * pixels = drawInfo.screen -> screen;
 	int WINDOW_WIDTH = drawInfo .screen -> windowWidth;
-
-	//windowSection * boundary = drawInfo.window;
 
 	int d = drawInfo.arguments[0];
 	int alphaStart = drawInfo.arguments[1];
@@ -283,11 +276,9 @@ void drawInternalWindowShadow( drawData drawInfo ) {
 
 	int * alphaValues = new int[d];
 	int * alphaValuesCorner = new int[ d * d ];
-	//int * alphaValues2 = new int[d];
 
 	int i;
 	for ( i = 0; i < d; i++ ) {
-		//alphaValues[i] = 256 - alphaStart * i / d;
 		alphaValues[i] = 256 - alphaStart * ( d - i ) * ( d - i ) / ( d * d );
 		int j;
 		for ( j = 0; j < d; j++ ) {
@@ -415,11 +406,12 @@ void drawInternalWindowShadow( drawData drawInfo ) {
 
 
 void drawWindowShadow( drawData * window, drawData * boundary, int d, int alphaStart, screenData * screen ) {
-	int arguments[7] = { d, alphaStart, 0,0,0,0,0 };//boundary -> window -> X1, boundary -> window -> Y1, boundary -> window -> X2, boundary -> window -> Y2, 0 };
+	int arguments[7] = { d, alphaStart, 0,0,0,0,0 };
 	addEvent( drawWindowShadowFunc, 20, arguments, window, boundary -> window, 7, screen);
 }
+
 void drawWindowShadowNoRepeat( drawData * window, drawData * boundary, int d, int alphaStart, screenData * screen, int * lastDraw ) {
-	int arguments[7] = { d, alphaStart, 0,0,0,0,0 };//boundary -> window -> X1, boundary -> window -> Y1, boundary -> window -> X2, boundary -> window -> Y2, 0 };
+	int arguments[7] = { d, alphaStart, 0,0,0,0,0 };
 	addEventNoRepeat( drawWindowShadowFunc, 20, arguments, window, boundary -> window, 7, screen, lastDraw);
 }
 

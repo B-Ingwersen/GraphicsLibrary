@@ -81,7 +81,6 @@ void openVideo( char * fileName ) {
 		openMP4Video( dataBuffer, fileSize );
 	}
 	delete file;
-	//return NULL;
 }
 
 

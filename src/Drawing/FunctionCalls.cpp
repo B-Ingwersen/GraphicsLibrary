@@ -40,9 +40,7 @@ void triangle(int x1, int y1, int x2, int y2, int x3, int y3, int color, windowS
 void text(char * string, int x, int y, int width, int size, int color, int quality, windowSection * window, screenData * screen ) {
 	void * dataPointer = string;
 	int arguments[] = { x, y, width, size, color, 0 };
-	/*if (quality >= 0 && quality <= 1) {
-		addEvent(4 + quality, arguments, dataPointer, 5);
-	}*/
+
 	if (quality == 0) {
 		addEvent(drawString, 6, arguments, dataPointer, window, 6, screen);
 	}

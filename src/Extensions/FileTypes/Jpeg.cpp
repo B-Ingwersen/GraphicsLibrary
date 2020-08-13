@@ -13,6 +13,10 @@ int zigZagIndexes[] = {	0,	1,	8, 	16,	9,	2,	3,	10,
 
 int DCNegativeBases[12] = { 0, -1, -3, -7, -15, -31, -63, -127, -255, -511, -1023, -2047 };
 
+unsigned char JPEGMarker[] = { 0xFF, 0xDA };
+unsigned char JPEGFalseMarker[] = { 0xFF, 0x00 };
+unsigned char JFIFMarker[] = "JFIF";
+
 void copyQuantizationTable( int * destination, unsigned char * source ) {
 	int i;
 	for ( i = 0; i < 64; i++ ) {
@@ -211,21 +215,18 @@ void print444Macroblocks( unsigned char * data, int ** quantPointers, huffmanTab
 		YData[0] = Y_DC * YQuant[0];
 		getTableValuesAC( data, position, YAC, YQuant, YData );
 		idct128( YData );
-		//cout << "Y:"; printBlock( YData );
 
 		memset( CbData, 0, 256 );
 		Cb_DC += getTableValuesDC( data, position, CbDC );
 		CbData[0] = Cb_DC * CbQuant[0];
 		getTableValuesAC( data, position, CbAC, CrQuant, CbData );
 		idct( CbData );
-		//cout << "Cb:"; printBlock( CbData );
 
 		memset( CrData, 0, 256 );
 		Cr_DC += getTableValuesDC( data, position, CrDC );
 		CrData[0] = Cr_DC * CrQuant[0];
 		getTableValuesAC( data, position, CrAC, CrQuant, CrData );
 		idct( CrData );
-		//cout << "Cr:"; printBlock( CrData );
 
 		int x, y;
 		int pixelIndex = width * j + i;
@@ -285,43 +286,37 @@ void print420Macroblocks( unsigned char * data, int ** quantPointers, huffmanTab
 		Y_DC += getTableValuesDC( data, position, YDC );
 		Y00Data[0] = Y_DC * YQuant[0];
 		getTableValuesAC( data, position, YAC, YQuant, Y00Data );
-		idct128( Y00Data );	//inverseDCTWithTableWithAdd( Y00Data, Y00Final );
-		//cout << "Y00:"; printBlock( Y00Data );
+		idct128( Y00Data );
 
 		memset( Y10Data, 0, 256 );
 		Y_DC += getTableValuesDC( data, position, YDC );
 		Y10Data[0] = Y_DC * YQuant[0];
 		getTableValuesAC( data, position, YAC, YQuant, Y10Data );
-		idct128( Y10Data );	//inverseDCTWithTableWithAdd( Y10Data, Y10Final );
-		//cout << "Y10:"; printBlock( Y10Data );
+		idct128( Y10Data );
 
 		memset( Y01Data, 0, 256 );
 		Y_DC += getTableValuesDC( data, position, YDC );
 		Y01Data[0] = Y_DC * YQuant[0];
 		getTableValuesAC( data, position, YAC, YQuant, Y01Data );
 		idct128( Y01Data );
-		//cout << "Y01:"; printBlock( Y01Data );
 
 		memset( Y11Data, 0, 256 );
 		Y_DC += getTableValuesDC( data, position, YDC );
 		Y11Data[0] = Y_DC * YQuant[0];
 		getTableValuesAC( data, position, YAC, YQuant, Y11Data );
 		idct128( Y11Data );
-		//cout << "Y11:"; printBlock( Y11Data );
 
 		memset( CbData, 0, 256 );
 		Cb_DC += getTableValuesDC( data, position, CbDC );
 		CbData[0] = Cb_DC * CbQuant[0];
 		getTableValuesAC( data, position, CbAC, CrQuant, CbData );
 		idct( CbData );
-		//cout << "Cb:"; printBlock( CbData );
 
 		memset( CrData, 0, 256 );
 		Cr_DC += getTableValuesDC( data, position, CrDC );
 		CrData[0] = Cr_DC * CrQuant[0];
 		getTableValuesAC( data, position, CrAC, CrQuant, CrData );
 		idct( CrData );
-		//cout << "Cr:"; printBlock( CrData );
 
 		int x, y;
 		int k = 0;
@@ -346,10 +341,6 @@ void print420Macroblocks( unsigned char * data, int ** quantPointers, huffmanTab
 
 	position[2] = blockEnd;
 }
-
-unsigned char JPEGMarker[] = { 0xFF, 0xDA };
-unsigned char JPEGFalseMarker[] = { 0xFF, 0x00 };
-unsigned char JFIFMarker[] = "JFIF";
 
 int getWordBE( unsigned char * data ) {
 	return ((int)(* data )) * 256 + ((int)(*( data + 1)));
@@ -399,9 +390,8 @@ screenData * renderJPEGImage( unsigned char * data, int fileSize ) {
 
 		if ( *( data + index + 1) == 192 || ( *( data + index + 1) == 0xC2 ) ) {
 			int SOFType = ((int)(data[index + 1])) & 0x0F;
-			//cout << "SOF" << SOFType << " @ " << index << endl;
+			
 			if ( SOFType != 0 ) {
-				//cout << "Bad SOF Type" << endl;
 				for ( i = 0; i < 4; i++ ) {
 					deleteHuffTable( &huffmanTablesAC[i] );
 					deleteHuffTable( &huffmanTablesDC[i] );
@@ -409,16 +399,16 @@ screenData * renderJPEGImage( unsigned char * data, int fileSize ) {
 				return NULL;
 			}
 
-			int length = getWordBE( data + index + 2);	//cout << "length is:\t" << length << endl;
-			dataPrecision = *( data + index + 4); 		//cout << "Data precision:\t" << dataPrecision << endl;
-			height = getWordBE( data + index + 5);		//cout << "Image height:\t" << height << endl;
-			width = getWordBE( data + index + 7); 		//cout << "Image width:\t" << width << endl;
-			numberOfComponents = *( data + index + 9 ); 	//cout << "#ofComponents:\t" << numberOfComponents << endl;
+			int length = getWordBE( data + index + 2);
+			dataPrecision = *( data + index + 4);
+			height = getWordBE( data + index + 5);
+			width = getWordBE( data + index + 7);
+			numberOfComponents = *( data + index + 9 );
 
 			for ( i = 0; i < numberOfComponents; i++ ) {
-				int compID = (int)( data[ index + 10 + 3 * i ] ); 	//cout << "Component ID:\t" << compID << endl;
-				int sample = (int)( data[ index + 10 + 3 * i + 1] ); 	//cout << "\tSamp:\t" << sample << endl;
-				int quant = (int)( data[ index + 10 + 3 * i + 2] ); 	//cout << "\tQuant:\t" << quant << endl;
+				int compID = (int)( data[ index + 10 + 3 * i ] );
+				int sample = (int)( data[ index + 10 + 3 * i + 1] );
+				int quant = (int)( data[ index + 10 + 3 * i + 2] );
 				if ( compID == 1 ) { YSample = sample; 	YQuant = qTables[ quant ]; }
 				if ( compID == 2 ) { CbSample = sample;	CbQuant = qTables[ quant ]; }
 				if ( compID == 3 ) { CrSample = sample; CrQuant = qTables[ quant ]; }
@@ -465,7 +455,7 @@ screenData * renderJPEGImage( unsigned char * data, int fileSize ) {
 					samplingFactor = 420;
 					renderWidth = width;	if ( width % 16 > 0 ) { renderWidth += 16 - width % 16; }
 					renderHeight = height;	if ( height % 16 > 0 ) { renderHeight += 16 - height % 16; }
-					if ( restartInterval == 0 ) { restartInterval = renderWidth * renderHeight / 256; /*cout << restartInterval << endl;*/ }	
+					if ( restartInterval == 0 ) { restartInterval = renderWidth * renderHeight / 256; }	
 				}
 			}
 
@@ -474,49 +464,37 @@ screenData * renderJPEGImage( unsigned char * data, int fileSize ) {
 			imageData -> screen = pixels;
 			imageData -> windowWidth = renderWidth;
 			imageData -> windowHeight = renderHeight;
-
-			//cout << endl;
 		}
 
 		else if ( *( data + index + 1) >= 0xE0 && *( data + index + 1) < 0xF0 ) {
-			//cout << "APP marker @ " << index << endl;
-			int length = getWordBE( data + index + 2); //cout << "length is:\t" << length << endl;
+			int length = getWordBE( data + index + 2);
 			index += length;
-
-			//cout << endl;
 		}
 
 
 		else if ( *( data + index + 1) == 0xC4 ) {
-			//cout << "DHT @ " << index << endl;
-			int length = getWordBE( data + index + 2); //cout << "length is:\t" << length << endl;
+			int length = getWordBE( data + index + 2);
 
 			int subIndex = 0;
 			while ( subIndex < length - 2 ) {
-				//cout << "DHT Table @ " << index + subIndex + 5 << endl;
-
-				int htInfo = *(data + index + subIndex + 4);	//cout << "\tHTinfo:\t" << htInfo << endl;
-				int tableClass = ( htInfo & 0xF0 ) >> 4; 	//cout << "\ttbCl:\t" << tableClass << endl;
-				int tableDest = ( htInfo & 0x0F ); 		//cout << "\ttbDst:\t" << tableDest << endl;
+				int htInfo = *(data + index + subIndex + 4);
+				int tableClass = ( htInfo & 0xF0 ) >> 4;
+				int tableDest = ( htInfo & 0x0F );
 
 				if ( tableClass ) { subIndex += fillHuffmanTable( &(huffmanTablesAC[ tableDest ]), data + index + subIndex + 5, data + index + subIndex + 21 ); }
 				else { subIndex += fillHuffmanTable( &(huffmanTablesDC[ tableDest ]), data + index + subIndex + 5, data + index + subIndex + 21 ); }
 
 				subIndex += 17;
 			}
-			//cout << index + subIndex + 5 << endl;
-
-			//cout << endl;
 		}
 		else if ( *( data + index + 1) == 0xDB ) {
-			//cout << "DQT @ " << index << endl;
-			int length = getWordBE( data + index + 2); //cout << "length is:\t" << length << endl;
+			int length = getWordBE( data + index + 2);
 
 			numberOfQT = (length - 2) / 65;
 
 			for ( i = 0; i < numberOfQT; i++ ) {
-				int qtInfo = *(data + index + 4 + 65 * i); 		//cout << "QT information:\t" << qtInfo << endl;
-				int elementPrecision = (qtInfo & 0xF0) >> 4;		//cout << "\teP:\t" << elementPrecision << endl;
+				int qtInfo = *(data + index + 4 + 65 * i);
+				int elementPrecision = (qtInfo & 0xF0) >> 4;
 				if ( elementPrecision ) { 				// will only work for 8 bit precision
 					if ( imageData != NULL ) {
 						delete imageData -> screen;
@@ -528,33 +506,27 @@ screenData * renderJPEGImage( unsigned char * data, int fileSize ) {
 					}
 					return NULL;
 				}
-				int tableDestination = qtInfo & 0x0F; 			//cout << "\ttD:\t" << tableDestination << endl;
+				int tableDestination = qtInfo & 0x0F;
 
 				copyQuantizationTable( qTables[ tableDestination ], data + index + 5 + 65 * i );
 			}
 			index += length;
-
-			//cout << endl;
 		}
 		else if ( *( data + index + 1) == 0xDD ) {
-			//cout << "DRI @ " << index << endl;
-			int restInt = getWordBE( data + index + 4); //cout << "restartInt:\t" << restartInterval << endl;
+			int restInt = getWordBE( data + index + 4);
 			if ( restInt != 0 ) { restartInterval = restInt; }
-			//cout << endl;
 		}
 		else if ( *( data + index + 1) == 0xD9 ) {
-			//cout << "End @ " << index << endl;
 			reachedEnd = true;
 		}
 
 		else if ( *( data + index + 1) == 0xDA ) {
-			//cout << "SOS @ " << index << endl;
-			int length = getWordBE( data + index + 2); 	//cout << "length is:\t" << length << endl;
-			int components = *( data + index + 4); 		//cout << "components:\t" << components << endl;
+			int length = getWordBE( data + index + 2);
+			int components = *( data + index + 4);
 
 			for ( i = 0; i < components; i++ ) {
-				int componentID = *(data + index + 5 + 2 * i); 	//cout << " \tCID:\t" << componentID << endl;
-				int huffmanTblID = *(data + index + 6 + 2 * i); //cout << " \tHTbl:\t" << huffmanTblID << endl;
+				int componentID = *(data + index + 5 + 2 * i);
+				int huffmanTblID = *(data + index + 6 + 2 * i);
 				int acTable = huffmanTblID & 0x0F;
 				int dcTable = (huffmanTblID & 0xF0) >> 4;
 
@@ -574,7 +546,6 @@ screenData * renderJPEGImage( unsigned char * data, int fileSize ) {
 
 			index += length + 2;
 			SOSindex = index;
-			//cout << "SOS @" << SOSindex << endl;
 
 			int copyIndex = SOSindex;
 			int restOfFile = fileSize - SOSindex;
@@ -619,7 +590,6 @@ screenData * renderJPEGImage( unsigned char * data, int fileSize ) {
 
 			index += 2;
 			SOSindex = index;
-			//cout << "SOS @" << SOSindex << endl;
 
 			int copyIndex = SOSindex;
 			int restOfFile = fileSize - SOSindex;

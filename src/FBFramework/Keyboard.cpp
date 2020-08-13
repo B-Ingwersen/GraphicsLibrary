@@ -42,7 +42,6 @@ void processKeys() {
 
 		LAST_KEY_ACTION_TYPE = ev.value;
 		if(ev.value == 0) {
-			//printf("%i released \n ", ev.code);
 			int keycode = ev.code;
 			if ( keycode == 42 || keycode == 54 ) {
 				SHIFT_DOWN = false;
@@ -58,11 +57,9 @@ void processKeys() {
 
 			if (globalKeyboardHandler != NULL) {
 				(*globalKeyboardHandler)( keycode );
-				//cout << "called "<< endl;
 			}
 		}
 		else if (ev.value == 1 || ev.value == 2) {
-			//printf("%i pressed \n ", ev.code);
 			int keycode = ev.code;
 			lastKeyDown = keycode;
 			if ( keycode == 42 || keycode == 54 ) {
@@ -87,10 +84,7 @@ void processKeys() {
 			}
 			else if (globalKeyboardHandler != NULL) {
 				(*globalKeyboardHandler)( keycode );
-				//cout << "called "<< endl;
 			}
-
-			//cout << keycode << endl;
 
 			lastEvent = clock();
 		}

@@ -50,27 +50,13 @@ int getCharacterGlyphIndex(ttfRoot * t, int c) {
     ttfCmapSubtableHeader * subtables = (ttfCmapSubtableHeader *)(cmapHeader + 1);
 
     int i;
-    //cout << "subtables n=" << numTables << endl;
     for (i = 0; i < numTables; i++) {
         u32 subtableOffset = u4beToLE(subtables[i].subtableOffset);
-       // cout << "\toffset:\t" << subtableOffset << endl;
-        //cout << "\t\tplatformID:\t" << u2beToLE(subtables[i].platformID) << endl;
 
         u8 * subtable = (u8*)(cmapHeader) + subtableOffset;
         u16 format = u2beToLE(*(u16*)subtable);
         u16 length = u2beToLE(*(u16*)(subtable + 2));
         u16 language = u2beToLE(*(u16*)(subtable + 4));
-        //cout << "\t\tformat:\t" << format << endl;
-        //cout << "\t\tlength:\t" << length << endl;
-        //cout << "\t\tlanguage:\t" << language << endl;
-
-        /*if (format == 0) {
-            u8 * glyphIdArray = (u8*)(subtable + 6);
-            int j;
-            for (j = 0; j < 256; j++) {
-                cout << "\t" << j << ":" << (int)glyphIdArray[j];
-            }
-        }*/
 
         if (format == 4) {
             u16 segCount = u2beToLE(*(u16*)(subtable + 6)) / 2;
@@ -80,10 +66,8 @@ int getCharacterGlyphIndex(ttfRoot * t, int c) {
             u2be * idRangeOffset=(u2be*)(subtable+ 16 + 3*2*segCount);
             u2be * glyphIdArray=(u2be*)(subtable + 16 + 4*2*segCount);
 
-            //cout << "\t\tsegment map to delta values" << endl;
             int j;
             for (j = 0; j < segCount; j++) {
-                //cout << "\t\t\t" << u2beToLE(endCode[j]) << "\t" << u2beToLE(startCode[j]) << "\t" << s2beToLE(idDelta[j]) << "\t" << u2beToLE(idRangeOffset[j]) << endl;
                 if ( u2beToLE(endCode[j]) >= c ) {
                     if ( u2beToLE(startCode[j]) > c) {
                         return 0;
@@ -139,7 +123,6 @@ glyphInfo * getGlyphInfo(ttfRoot * t, int c) {
 
     int glyphIndex = getCharacterGlyphIndex(t, c);
     int glyphOffset = getGlyphOffset(t, glyphIndex);
-    //cout << glyphOffset << endl;
 
     ttfGlyf * g = (ttfGlyf*)((u8*)getTtfTable(t, "glyf") + glyphOffset);
     if (g -> number_of_contours < 0) {
@@ -161,7 +144,6 @@ glyphInfo * getGlyphInfo(ttfRoot * t, int c) {
     info -> glyphIndex = glyphIndex;
 
     i16 nContours = s2beToLE(g -> number_of_contours);
-    //cout << "nContours:\t" << nContours << endl;
     info -> nContours = nContours;
     info -> endpoints = new int[nContours];
 
@@ -171,7 +153,6 @@ glyphInfo * getGlyphInfo(ttfRoot * t, int c) {
     for (i = 0; i < nContours; i++) {
         u16 endPoint = u2beToLE(*(u16*)(p + 2 * i));
         info -> endpoints[i] = endPoint;
-        //cout << endPoint << endl;
 
         if (endPoint > pointCount) {
             pointCount = endPoint;
@@ -181,8 +162,6 @@ glyphInfo * getGlyphInfo(ttfRoot * t, int c) {
 
     p += nContours * 2;
     u16 instructionLength = u2beToLE(*(u16*)p);
-    //cout << "nInstructions:\t" << instructionLength << endl;
-    //cout << "pointCount:\t" << pointCount << endl;
     p += 2;
 
     p += instructionLength;
@@ -206,7 +185,6 @@ glyphInfo * getGlyphInfo(ttfRoot * t, int c) {
         p++;
     }
 
-    //cout << "xCords" << endl;
     i16 lastX = 0;
     for (i = 0; i < pointCount; i++) {
         u8 flag = flags[i];
@@ -231,12 +209,10 @@ glyphInfo * getGlyphInfo(ttfRoot * t, int c) {
         }
 
         lastX = x;
-        //cout << "\t" << (int)x << endl;
 
         points[2 * i] = x - info -> x1;
     }
 
-    //cout << "yCords" << endl;
     i16 lastY = 0;
     for (i = 0; i < pointCount; i++) {
 
@@ -245,7 +221,6 @@ glyphInfo * getGlyphInfo(ttfRoot * t, int c) {
         i16 y;
         if (flag & 0x4) {
             y = (i16)(*(u8*)p);
-            //cout << y << endl;
             if (!(flag & 0x20)) {
                 y = -y;
             }
@@ -263,20 +238,8 @@ glyphInfo * getGlyphInfo(ttfRoot * t, int c) {
         }
 
         lastY = y;
-        //cout << "\t" << (int)y << endl;
         points[2 * i + 1] = (info -> Y2) - y;
     }
-
-    /*cout << "flags" << endl;
-    int j;
-    for (j = 0; j < nContours; j++) {
-        cout << "contour " << j << endl;
-        if (j == 0) {i = 0;}
-        else {i = info -> endpoints[j - 1] + 1; }
-        for (i = i; i < info -> endpoints[j] + 1; i++) {
-            cout << "\t" << (int)(flags[i] & 1) << "\t" << points[2*i] << "\t" << points[2*i+1] << endl;
-        }
-    }*/
 
     info -> flags = flags;
     info -> points = points;
@@ -285,7 +248,6 @@ glyphInfo * getGlyphInfo(ttfRoot * t, int c) {
     info -> h = h;
     getGlyphAdvanceWidth(t, glyphIndex, info);
 
-    //cout << s2beToLE(g -> x_min) << ", " << s2beToLE(g -> y_min) << ", " << s2beToLE(g -> x_max) << ", " << s2beToLE(g -> y_max) << endl;
     return info;
 }
 
@@ -306,7 +268,7 @@ void getTrackingTable(ttfRoot * t) {
         entry++;
     }
 }
-//struct htmxEntry
+
 void getHTMXTable(ttfRoot * t) {
     ttfTrackTable * trak = (ttfTrackTable *)getTtfTable(t, "trak");
 }
@@ -427,10 +389,6 @@ screenData * downsizeCharacterBuffer(unsigned char * pixels, int w, int h, int d
 }
 
 void drawTriangleFixBezier(float x1i, float y1i, float x2i, float y2i, float x3i, float y3i, unsigned char * pixels, int WINDOW_WIDTH, int WINDOW_HEIGHT) {
-   	//cout << x1i << ", " << y1i << ", " << x2i << ", " << y2i << ", " << x3i << ", " << y3i << endl;
-	/*Uint32 * pixels = screen -> screen;
-	int WINDOW_WIDTH = screen -> windowWidth;
-	int WINDOW_HEIGHT = screen -> windowHeight;*/
 
 	int x1 = (int)x1i;
 	int y1 = (int)y1i;
@@ -440,7 +398,7 @@ void drawTriangleFixBezier(float x1i, float y1i, float x2i, float y2i, float x3i
 	int y3 = (int)y3i;
 
 	int X1, Y1, X2, Y2, X3, Y3;
-	//X1 = 0;
+	
 	//Assign the uppercase variables according to the y-values: Y1 < Y2 < Y3
 	if (y2 > y1) {
 		if (y2 > y3) {
@@ -470,7 +428,6 @@ void drawTriangleFixBezier(float x1i, float y1i, float x2i, float y2i, float x3i
 			else {X3 = x1;Y3 = y1;X1 = x2;Y1 = y2;}
 		}
 	}
-	//cout << X1 << ", " << Y1 << ", " << X2 << ", " << Y2 << ", " << X3 << ", " << Y3 << endl;
 
 	int xdiff1 = X2 - X1; int ydiff1 = Y2 - Y1; //Line 1: (X1,Y1) -> (X2,Y2)
 	int xdiff2 = X3 - X1; int ydiff2 = Y3 - Y1; //Line 2: (X1,Y1) -> (X3,Y3)
@@ -562,10 +519,6 @@ void drawTriangleFixBezier(float x1i, float y1i, float x2i, float y2i, float x3i
 	}
 }
 void drawTriangleForPoly(float x1i, float y1i, float x2i, float y2i, float x3i, float y3i, unsigned char * pixels, int WINDOW_WIDTH, int WINDOW_HEIGHT) {
-    //cout << x1i << ", " << y1i << ", " << x2i << ", " << y2i << ", " << x3i << ", " << y3i << endl;
-	/*unsigned char * pixels = screen;
-	int WINDOW_WIDTH = screen -> windowWidth;
-	int WINDOW_HEIGHT = screen -> windowHeight;*/
 
 	int x1 = (int)x1i;
 	int y1 = (int)y1i;
@@ -575,7 +528,7 @@ void drawTriangleForPoly(float x1i, float y1i, float x2i, float y2i, float x3i, 
 	int y3 = (int)y3i;
 
 	int X1, Y1, X2, Y2, X3, Y3;
-	//X1 = 0;
+	
 	//Assign the uppercase variables according to the y-values: Y1 < Y2 < Y3
 	if (y2 > y1) {
 		if (y2 > y3) {
@@ -673,15 +626,6 @@ void drawTriangleForPoly(float x1i, float y1i, float x2i, float y2i, float x3i, 
 	}
 }
 void copyBufferRGBShade(screenData * sourceBuffer, screenData * targetBuffer, int xSource, int ySource, int xTarget, int yTarget, int width, int height) {
-	/*int xSource = drawInformation.arguments[0];
-	int ySource = drawInformation.arguments[1];
-	int xTarget = drawInformation.arguments[2];
-	int yTarget = drawInformation.arguments[3];
-	int width = drawInformation.arguments[4];
-	int height = drawInformation.arguments[5];
-
-	screenData * sourceBuffer = (screenData*) (drawInformation.dataPointer);
-	screenData * targetBuffer = drawInformation.screen;*/
 
 	if ( xSource < 0 ) {
 		xTarget -= xSource;
@@ -778,9 +722,8 @@ fontCharacterCache * drawTrueTypeCharacter(int c, trueTypeFontRenderer * rendere
 	int glyphIndex = info -> glyphIndex;
 
 	float scaleDown = ((float)info -> h) / (fontSize * aliasScale);
-	//fR -> scale = (float)(info -> h) / fontSize;
 	float yOffset = floor( ((float)info -> Y2 - (float)info -> y2) / scaleDown / aliasScale) * aliasScale;
-	int w = ceil( ((float)(info -> x2) - (float)(info -> x1)) / scaleDown ) + aliasScale;  //ceil( ((float)info -> w) / (scaleDown) );
+	int w = ceil( ((float)(info -> x2) - (float)(info -> x1)) / scaleDown ) + aliasScale;
 	int h = ceil( ( ((float)info -> Y2 - (float)info -> y1) - yOffset) / scaleDown )+ aliasScale;
 
     unsigned char * screen = new unsigned char[w*h];
@@ -804,15 +747,12 @@ fontCharacterCache * drawTrueTypeCharacter(int c, trueTypeFontRenderer * rendere
 			flags = info -> flags + info -> endpoints[j - 1] + 1;
 		}
 
-		//cout << len << endl;
 		int ptS[2];
 		int * pt1 = NULL;
 		int * bezRef = NULL;
 		int * bezEnd = NULL;
 		int * ptEnd = NULL;
 		for (i = 0; i < len; i++) {
-			//cout << (int)flags[i] << poly[2*i] << "\t" << poly[2*i+1] << endl;
-			//cout << (int)flags[i] << endl;
 			if (flags[i] & 1) {
 				pt1 = &poly[2 * i];
 				ptEnd = pt1;
@@ -827,7 +767,6 @@ fontCharacterCache * drawTrueTypeCharacter(int c, trueTypeFontRenderer * rendere
 		int phase = 0;
 
 		for (i = i; i < len; i++) {
-			//cout << (int)flags[i] << endl;
 			if (flags[i] & 1) {
 				if (phase > 0) {
 					drawTriangleFixBezier(((float)pt1[0])/scaleDown, ((float)pt1[1])/scaleDown - yOffset,
@@ -837,7 +776,6 @@ fontCharacterCache * drawTrueTypeCharacter(int c, trueTypeFontRenderer * rendere
 				drawTriangleForPoly(0, 0, 
 					((float)pt1[0])/scaleDown, ((float)pt1[1])/scaleDown - yOffset,
 					((float)poly[2*i])/scaleDown, ((float)poly[2*i+1])/scaleDown - yOffset, screen, w, h);
-				//drawTriangleForPoly(0,0, pt1[0], pt1[1], poly[2*i], poly[2*i+1], screen);
 				phase = 0;
 				pt1 = &poly[2*i];
 			}
@@ -845,7 +783,6 @@ fontCharacterCache * drawTrueTypeCharacter(int c, trueTypeFontRenderer * rendere
 				if (phase > 0) {
 					int ptX = (bezRef[0] + poly[2*i]) / 2;
 					int ptY = (bezRef[1] + poly[2*i + 1]) / 2;
-					//drawTriangleForPoly(0,0, pt1[0], pt1[1], ptX, ptY, screen);
 
 					drawTriangleForPoly(0, 0, 
 						((float)pt1[0])/scaleDown, ((float)pt1[1])/scaleDown - yOffset,
@@ -854,7 +791,7 @@ fontCharacterCache * drawTrueTypeCharacter(int c, trueTypeFontRenderer * rendere
 					drawTriangleFixBezier(((float)pt1[0])/scaleDown, ((float)pt1[1])/scaleDown - yOffset,
 						((float)ptX)/scaleDown, ((float)ptY)/scaleDown - yOffset,
 						((float)bezRef[0])/scaleDown, ((float)bezRef[1])/scaleDown - yOffset, screen, w, h);
-					//drawTriangleFixBezier(pt1[0], pt1[1], ptX, ptY, bezRef[0], bezRef[1], screen);
+
 					// fix bezier curve
 					ptS[0] = ptX;
 					ptS[1] = ptY;
@@ -875,12 +812,11 @@ fontCharacterCache * drawTrueTypeCharacter(int c, trueTypeFontRenderer * rendere
 			drawTriangleForPoly(0, 0, 
 				((float)pt1[0])/scaleDown, ((float)pt1[1])/scaleDown - yOffset,
 				((float)ptEnd[0])/scaleDown, ((float)ptEnd[1])/scaleDown - yOffset, screen, w, h);
-			//drawTriangleForPoly(0,0, pt1[0], pt1[1], ptEnd[0], ptEnd[1], screen);
+			
 			if (bezEnd != NULL && phase != 0) {
 				drawTriangleFixBezier(((float)pt1[0])/scaleDown, ((float)pt1[1])/scaleDown - yOffset,
 						((float)ptEnd[0])/scaleDown, ((float)ptEnd[1])/scaleDown - yOffset,
 						((float)bezEnd[0])/scaleDown, ((float)bezEnd[1])/scaleDown - yOffset, screen, w, h);
-				//drawTriangleFixBezier(pt1[0], pt1[1], ptEnd[0], ptEnd[1], bezEnd[0], bezEnd[1], screen);
 			}
 		}
 	}
@@ -888,14 +824,12 @@ fontCharacterCache * drawTrueTypeCharacter(int c, trueTypeFontRenderer * rendere
     int size = w*h;
     unsigned char * s = screen;
     for (i = 0; i < size; i++) {
-        //s[i] = (s[i] % 2) * 128;
 		if (s[i] % 2) {
 			s[i] = 0;
 		}
 		else {
 			s[i] = 255;
 		}
-        //s[i] *= 40;
     }
 
     screenData * charScreen = downsizeCharacterBuffer(screen, w, h, aliasScale);
@@ -1046,26 +980,22 @@ void closeTrueTypeRenderer(trueTypeFontDescriptor * descriptor, trueTypeFontRend
     }
 }
 
-float getKerningPair(trueTypeFontRenderer * renderer, i16 l, i16 r) {//, i16 l, i16 r) {
-    //u8 * p = (u8*)getTtfTable(t, "kern");
+float getKerningPair(trueTypeFontRenderer * renderer, i16 l, i16 r) {
     u8 * p = renderer -> descriptor -> kernTablePointer;
 
     if (p == NULL) {
         return 0;
     }
     u16 subtableCount = u2beToLE( *(u16*)(p + 2) );
-    //cout << "subtableCount:\t" << subtableCount << endl;
 
     int i;
     p += 4;
     for ( i = 0; i < subtableCount; i++) {
         u16 format = u2beToLE(*(u16*)p);
         u16 length = u2beToLE(*(u16*)(p + 2));
-        //cout << "length\t" << length << endl;
 
         if (format == 0) {
             u16 pairCount = u2beToLE( *(u16*)(p + 6));
-            //cout << "Pair Count:\t" << pairCount << endl;
             ttfKernSubtableFormat0KerningPair * kp = (ttfKernSubtableFormat0KerningPair *)(p + 14);
             int j;
             for (j = 0; j < pairCount; j++) {
@@ -1076,8 +1006,6 @@ float getKerningPair(trueTypeFontRenderer * renderer, i16 l, i16 r) {//, i16 l, 
                     return ((float)val) / renderer -> scale;
                 }
 
-                //i16 val = s2beToLE( kp -> value );
-                //cout << "\t" << left << ", " << right << ", " << val << endl;
                 kp++;
             }
         }
@@ -1089,22 +1017,19 @@ float getKerningPair(trueTypeFontRenderer * renderer, i16 l, i16 r) {//, i16 l, 
 
 
 void drawTrueTypeText(trueTypeFontRenderer * renderer, char * text, int x, int y, float maxWidth, bool draw) {
-    //textEditor_trueTypeRendererData * rendererData = (textEditor_trueTypeRendererData *)(editor -> fontRendererData);
-    //trueTypeFontRenderer * renderer = rendererData -> renderer;
-    //float maxWidth = (float)rendererData -> pixelWidth;
+
     float width = 0;
     int i = 0;
     while (true) {
         int c = text[i];
         if (c > 0 && c < 127) {
             fontCharacterCache * character = drawTrueTypeCharacter(c, renderer);
-            float newWidth = width + character -> advanceWidth;//character -> fontWidth + character -> xBufferOffset;
+            float newWidth = width + character -> advanceWidth;
             if (c == 9) {
                 newWidth = ((float)((int)((width + 1.0) / renderer -> tabWidth) + 1)) * renderer -> tabWidth;
             }
 
             if (newWidth >= maxWidth) {
-                //TODO!
                 break;
             }
             if (draw && c != 32) {

@@ -286,7 +286,6 @@ void betterQualChar( int * charInfo, int color, int x, int y, int size, windowSe
 }
 
 void betterQualString( drawData drawInformation ) {
-	//cout << "STRING" << endl;
 	textPixels = drawInformation.screen -> screen;
 	textWINDOW_WIDTH = drawInformation.screen -> windowWidth;
 	windowSection WINDOW = *(drawInformation.window);

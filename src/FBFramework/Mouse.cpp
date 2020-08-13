@@ -99,12 +99,9 @@ void * processMouse(void * threadid) {
                 if ( middleButtonDown ) {
                     scrollX = deltaMouseX;
                     scrollY = -deltaMouseY;
-                    //scrollTimeOld = scrollTime;
-                    //scrollTime = event.wheel.timestamp;
                     
                     if ( eventHandlers[ MOUSE_SCROLL ].state ) {
                         callEventHandler( MOUSE_SCROLL );
-                        //lastEvent = clock();
                     }
                     
                     continue;
@@ -122,11 +119,9 @@ void * processMouse(void * threadid) {
 					if ( lastMouseWindow != currentMouseWindow ) {
 						if ( lastMouseWindow != NULL ) {
 							callWindowEventHandler( lastMouseWindow, WINDOW_EXIT );
-							//cout << "WINDOW_EXIT\t" << lastMouseWindow << endl;
 						}
 						if ( currentMouseWindow != NULL) {
 							callWindowEventHandler( currentMouseWindow, WINDOW_ENTER );
-							//cout << "WINDOW_ENTER\t" << currentMouseWindow << endl;
 						}
 					}
 				}
@@ -138,7 +133,6 @@ void * processMouse(void * threadid) {
 				lastEvent = clock();
             }
         }
-        //cout << x << "\t" << y << "\t" << left << "\t" << middle << "\t" << right << endl;
     }
 
     pthread_exit(NULL);
@@ -148,21 +142,6 @@ void drawCursor() {
     drawData command;
     cursorBufferX = mouseX - 10;
     cursorBufferY = mouseY - 10;
-    /*if (cursorBuffer == NULL) {
-        cursorBuffer = createOffscreenBuffer( 20, 20 );
-    }
-
-    command.arguments[0] = cursorBufferX;
-    command.arguments[1] = cursorBufferY;
-    command.arguments[2] = 0;
-    command.arguments[3] = 0;
-    command.arguments[4] = 20;
-    command.arguments[5] = 20;
-
-    command.dataPointer = &FRAME_BUFFER_SCREEN;
-    command.screen = cursorBuffer;
-
-    copyBufferSection(command);*/
 
     command.screen = &FRAME_BUFFER_SCREEN;
     command.window = parentWindow -> window;
@@ -191,8 +170,6 @@ void drawCursor() {
     command.arguments[3] = 8;
     command.arguments[4] = 0xFF0000;
     drawRectangle(command);
-
-    //cout << "blah" << endl;
 }
 void paintOverCursor() {
     if (cursorBuffer == NULL) {
@@ -210,5 +187,4 @@ void paintOverCursor() {
     command.screen = &FRAME_BUFFER_SCREEN;
 
     copyBufferSection(command);
-    //cout << "blah" << endl;
 }

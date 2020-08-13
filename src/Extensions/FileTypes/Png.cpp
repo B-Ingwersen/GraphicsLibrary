@@ -37,8 +37,6 @@ int getNBitsFlip( unsigned char * data, int bit, int len ) {
 }
 
 huffmanTable * makeHuffTable( int * sourceTable, int length ) {
-	//cout << endl;
-
 	int i, j, k;
 	int indexLengths[16];
 	int indexBases[16];
@@ -57,7 +55,6 @@ huffmanTable * makeHuffTable( int * sourceTable, int length ) {
 	for ( i = 0; i < 16; i++ ) {				// determines the start index for codes of each length in the new source table
 		indexBases[i] = index;
 		index += indexLengths[i];
-		//cout << indexLengths[ i ] << endl;
 	}
 
 	int * newSourceTable = new int[ length ];
@@ -71,10 +68,6 @@ huffmanTable * makeHuffTable( int * sourceTable, int length ) {
 		}
 	}
 
-	for ( i = 0; i < length; i++ ) {
-		//cout << newSourceTable[ i ] << endl;
-	}
-
 	huffmanTable * table = new huffmanTable;
 	fillHuffTableIntSource( table, indexLengths, newSourceTable );
 	delete newSourceTable;
@@ -83,7 +76,6 @@ huffmanTable * makeHuffTable( int * sourceTable, int length ) {
 }
 
 void makeHuffTable16( int * sourceTable, int length ) {
-	//cout << endl;
 
 	int i, j, k;
 	int indexLengths[16];
@@ -103,10 +95,8 @@ void makeHuffTable16( int * sourceTable, int length ) {
 	for ( i = 0; i < 16; i++ ) {				// determines the start index for codes of each length in the new source table
 		indexBases[i] = index;
 		index += indexLengths[i];
-		//cout << i << "\t" << indexLengths[i] << endl;
 	}
 
-	//cout << length << endl;
 	int * newSourceTable = new int[ length ];
 	for ( i = 0; i < length; i++ ) {
 		int indexLen = sourceTable[2 * i];
@@ -114,15 +104,12 @@ void makeHuffTable16( int * sourceTable, int length ) {
 			indexLen--;
 			int value = sourceTable[ 2 * i + 1 ];
 			newSourceTable[ indexBases[ indexLen ] ] = value;
-			//cout << indexLen << "\t" << indexBases[ indexLen ] << endl;
 			indexBases[ indexLen ]++;
 		}
 	}
 
 	huffmanTable * table = new huffmanTable;
 	fillHuffTableIntSource( table, indexLengths, newSourceTable );
-
-	//return table;
 }
 
 int lenExtraBitTable[29] = { 0, 0, 0, 0, 0, 0, 0, 0,
@@ -183,7 +170,6 @@ void decodeHuffmanBlock( unsigned char * data, int * position, huffmanTable * li
 			outIndex++;
 		}
 		else if ( value == 256 ) {
-			//cout << "EOB" << endl;
 			break;	// end of block
 		}
 		else {				// length distance combination
@@ -239,8 +225,6 @@ void decodeNonCompressedBlock( unsigned char * data, int * position, unsigned ch
 
 	int LEN = 256 * data[index + 1] + data[index]; index += 2;
 	int NLEN = 256 * data[index + 1] + data[index]; index+= 2;
-	//cout << "LEN\t" << LEN << endl;
-	//cout << "NLEN\t" << NLEN << endl;
 }
 
 void decodeBlockHuffmanDynamic( unsigned char * data, int * position, unsigned char * outData ) {
@@ -297,7 +281,6 @@ void decodeBlockHuffmanDynamic( unsigned char * data, int * position, unsigned c
 				literalTable[ 2 * i + 1] = i;
 				i++;
 			}
-			//lastCodeLength = 0;
 			i--;
 		}
 		else if ( codeLength == 18 ) {
@@ -308,7 +291,6 @@ void decodeBlockHuffmanDynamic( unsigned char * data, int * position, unsigned c
 				literalTable[ 2 * i + 1] = i;
 				i++;
 			}
-			//lastCodeLength = 0;
 			i--;
 		}
 		else {
@@ -342,7 +324,6 @@ void decodeBlockHuffmanDynamic( unsigned char * data, int * position, unsigned c
 				distanceTable[ 2 * i + 1] = i;
 				i++;
 			}
-			//lastCodeLength = 0;
 			i--;
 		}
 		else if ( codeLength == 18 ) {
@@ -353,7 +334,6 @@ void decodeBlockHuffmanDynamic( unsigned char * data, int * position, unsigned c
 				distanceTable[ 2 * i + 1] = i;
 				i++;
 			}
-			//lastCodeLength = 0;
 			i--;
 		}
 		else {
@@ -362,10 +342,6 @@ void decodeBlockHuffmanDynamic( unsigned char * data, int * position, unsigned c
 			lastCodeLength = codeLength;
 		}
 	}
-
-	/*for ( j = 0; j < HLIT + 257; j++ ) {
-		cout << literalTable[ 2 * j ] << "\t" << literalTable[ 2 * j + 1 ] << endl;
-	}*/
 
 	huffmanTable * literalHuffmanTable = makeHuffTable( literalTable, HLIT + 257 );
 	huffmanTable * distanceHuffmanTable = makeHuffTable( distanceTable, HDIST + 1 );
@@ -457,7 +433,7 @@ void displayPNGColorType2( int width, int height, unsigned char * outData, uint3
 				r = outData[ rowIndex + 3 * i + 1];
 				g = outData[ rowIndex + 3 * i + 2];
 				b = outData[ rowIndex + 3 * i + 3];
-				pixels[ j * width + i ] = ( r << 16 ) + ( g << 8 ) + b; ;//( r << 16 ) + ( g << 8 ) + b;
+				pixels[ j * width + i ] = ( r << 16 ) + ( g << 8 ) + b; 
 		}
 		rowIndex += byteWidth;
 	}
@@ -555,7 +531,7 @@ void displayPNGColorType6( int width, int height, unsigned char * outData, uint3
 				g = outData[ rowIndex + 4 * i + 2];
 				b = outData[ rowIndex + 4 * i + 3];
 				a = outData[ rowIndex + 4 * i + 4];
-				pixels[ j * width + i ] = (a << 24) + ( r << 16 ) + ( g << 8 ) + b; ;//( r << 16 ) + ( g << 8 ) + b;
+				pixels[ j * width + i ] = (a << 24) + ( r << 16 ) + ( g << 8 ) + b;
 		};
 		rowIndex += byteWidth;
 	}
@@ -578,32 +554,23 @@ screenData * renderPNGImage( unsigned char * data, int fileSize ) {
 		if ( compareData( data + index - 4, IHDR, 4 ) ) {
 			width = readIntBigEndian( data + index );
 			height = readIntBigEndian( data + index + 4 );
-			//cout << "Image dimensions are: " << width << "x" << height << endl;
 
 			bitDepth = data[ index + 8 ];
 			colorType = data[ index + 9 ];
-			//cout << "Color type: " << colorType << endl;
 			compressionMethod = data[ index + 10 ];
-			//cout << "Compression method: " << compressionMethod << endl;
 			filterMethod = data[ index + 11 ];
-			//cout << "Filter Method: " << filterMethod << endl;
 			interlaceMethod = data[ index + 12 ];
-			//cout << "Interlace Method: " << interlaceMethod << endl;
 		}
 		else if ( compareData( data + index - 4, PLTE, 4 ) ) {
-			//cout << "Number of colors " << length;
+			// TODO -- implement
 		}
 		else if ( compareData( data + index - 4, IDAT, 4 ) ) {
-			//cout << "IDAT @ " << index << endl;
-
 			IDATPointers[ IDATIndex ][0] = index;
 			IDATPointers[ IDATIndex ][1] = length;
 			IDATIndex++;
-
-			//cout << endl;
 		}
 		else if ( compareData( data + index - 4, bKGD, 4 ) ) {
-			//cout << "bKGD@ " << (int)(data[index]) << endl;
+			// TODO -- implement
 		}
 
 		index += length + 4;
@@ -631,27 +598,24 @@ screenData * renderPNGImage( unsigned char * data, int fileSize ) {
 	int outIndex = 0;
 
 	int CMF = getNBits( data + index, bit, 8 ); index++;
-	int CM = CMF & 0x0F; 	//cout << "CM\t" << CM << endl;
-	int CINFO = CMF >> 4; 	//cout << "CINFO\t" << CINFO << endl;
+	int CM = CMF & 0x0F;
+	int CINFO = CMF >> 4;
 
 	int FLG = getNBits( data + index, bit, 8 ); index++;;
 	if ( ( (256 * CMF + FLG) % 31 ) == 0 ) {
 
-		int FDICT = ( FLG >> 5 ) & 1;	//cout << "FDICT\t" << FDICT << endl;
-		int FLEVEL = FLG >> 6; 		//cout << "FLEVEL\t" << FLEVEL << endl;
-
+		int FDICT = ( FLG >> 5 ) & 1;
+		int FLEVEL = FLG >> 6;
 
 		bool lastBlock = false;
 		while ( !lastBlock ) {
 
-			//cout << endl << "NEXT BLOCK:" << endl;
-
-			int BFINAL = getNBits( data + index, bit, 1 );			//cout << "\tBFINAL\t" << BFINAL << endl;
+			int BFINAL = getNBits( data + index, bit, 1 );
 			bit += 1; if ( bit > 7 ) { index += bit / 8; bit &= 7; }
 
 			if ( BFINAL ) { lastBlock = true; }
 
-			int BTYPE = getNBits( data + index, bit, 2 );			//cout << "\tBTYPE\t" << BTYPE << endl;
+			int BTYPE = getNBits( data + index, bit, 2 );
 			bit += 2; if ( bit > 7 ) { index += bit / 8; bit &= 7; } 
 
 			int position[3] = { bit, index, outIndex };
@@ -668,12 +632,8 @@ screenData * renderPNGImage( unsigned char * data, int fileSize ) {
 			bit = position[0];
 			index = position[1];
 			outIndex = position[2];
-
-			//cout << "Position:\t" << index << "\t" << bit << "\t" << outIndex << endl;
 		}
 	}
-	//cout << endl;
-
 
 	if ( colorType == 2 ) {
 		displayPNGColorType2( width, height, outData, pixels );
@@ -684,7 +644,6 @@ screenData * renderPNGImage( unsigned char * data, int fileSize ) {
 		imageData -> windowWidth = width;
 		imageData -> windowHeight = height;
 
-		//cout << "finished" << endl;
 		return imageData;
 	}
 
@@ -697,7 +656,6 @@ screenData * renderPNGImage( unsigned char * data, int fileSize ) {
 		imageData -> windowWidth = width;
 		imageData -> windowHeight = height;
 
-		//cout << "finished" << endl;
 		return imageData;
 	}
 	return NULL;

@@ -19,7 +19,8 @@ OBJ = $(patsubst %,$(OUTPUT_DIR)/%,$(_OBJ))
 $(OUTPUT_DIR)/%.o : $(SOURCE_DIR)/%.cpp $(INC_DEPS) $(SRC_DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
-DrawingLibrary : $(OBJ)
+GraphicsLibrary : $(OBJ)
+	ld -relocatable -o $(OUTPUT_DIR)/GraphicsLibrary.o $^
 
 Examples/Minesweeper : $(OBJ) $(SOURCE_DIR)/Examples/Minesweeper.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)

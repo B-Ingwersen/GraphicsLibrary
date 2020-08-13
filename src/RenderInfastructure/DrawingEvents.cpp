@@ -173,7 +173,6 @@ void processEvents() {
 			}
 			processEventQueueIndex = 0;
 			while (processEventQueueIndex < eventQueue1Index) {
-				//(*drawEventFunctions[eventQueue1[i].drawFunction]) (eventQueue1[i]);
 				if (eventQueue1[processEventQueueIndex].drawFunction != NULL) {
 					eventQueue1[processEventQueueIndex].drawFunction ( eventQueue1[processEventQueueIndex] );
 				}
